@@ -16,6 +16,7 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const readerRef = React.useRef<HTMLDivElement>(null);
+  const totalPages = file?.pages.length || 0;
 
   useEffect(() => {
     const handleFullScreenChange = () => {
@@ -58,8 +59,6 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
       setIsFullScreen(!isFullScreen);
     }
   };
-
-  const totalPages = file?.pages.length || 0;
 
   const currentPageElements = useMemo(() => {
     if (!file || totalPages === 0) return [];
