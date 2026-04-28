@@ -153,12 +153,12 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.02 }}
             transition={{ duration: 0.25 }}
-            style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}
+            style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}
           >
             {currentPageElements.map((el, i) => (
               <div key={i}>
                 {el.type === 'text' ? (
-                  <p className="document-content" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8', color: '#e0e0e0' }}>
+                  <p className="document-content" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8', color: '#e0e0e0', textAlign: 'center' }}>
                     {highlightText(el.content, searchTerm)}
                   </p>
                 ) : (
