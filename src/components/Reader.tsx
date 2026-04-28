@@ -22,21 +22,26 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
       setIsFullScreen(!!document.fullscreenElement);
     };
     
-    const handleEsc = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !document.fullscreenElement) {
         setIsFullScreen(false);
         setFullScreenImage(null);
       }
+      if (e.key === 'ArrowRight') {
+        setCurrentPageIndex(p => p < totalPages - 1 ? p + 1 : p);
+      } else if (e.key === 'ArrowLeft') {
+        setCurrentPageIndex(p => p > 0 ? p - 1 : p);
+      }
     };
 
     document.addEventListener('fullscreenchange', handleFullScreenChange);
-    window.addEventListener('keydown', handleEsc);
+    window.addEventListener('keydown', handleKeyDown);
     
     return () => {
       document.removeEventListener('fullscreenchange', handleFullScreenChange);
-      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [totalPages]);
 
   const toggleFullScreen = async () => {
     if (!readerRef.current) return;
@@ -318,6 +323,72 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Side Navigation Buttons for FullScreen */}
+      <AnimatePresence>
+        {isFullScreen && (
+          <>
+            <motion.button
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              onClick={goToPrevPage}
+              disabled={currentPageIndex === 0}
+              className="hover-cyan"
+              style={{
+                position: 'fixed',
+                left: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 50,
+                background: 'rgba(5, 5, 10, 0.6)',
+                border: '1px solid var(--accent-cyan)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: currentPageIndex === 0 ? 'not-allowed' : 'pointer',
+                opacity: currentPageIndex === 0 ? 0.3 : 1,
+                backdropFilter: 'blur(10px)',
+                color: 'var(--accent-cyan)'
+              }}
+            >
+              <ChevronLeft size={40} />
+            </motion.button>
+            <motion.button
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              onClick={goToNextPage}
+              disabled={currentPageIndex === totalPages - 1}
+              className="hover-cyan"
+              style={{
+                position: 'fixed',
+                right: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 50,
+                background: 'rgba(5, 5, 10, 0.6)',
+                border: '1px solid var(--accent-cyan)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: currentPageIndex === totalPages - 1 ? 'not-allowed' : 'pointer',
+                opacity: currentPageIndex === totalPages - 1 ? 0.3 : 1,
+                backdropFilter: 'blur(10px)',
+                color: 'var(--accent-cyan)'
+              }}
+            >
+              <ChevronRight size={40} />
+            </motion.button>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Image Overlay */}
       <AnimatePresence>
