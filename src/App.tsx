@@ -92,7 +92,7 @@ const App: React.FC = () => {
             id: fileId,
             name: fileData.name, 
             type: fileData.type, 
-            metadata: { pages_count: fileData.pages.length } 
+            metadata: { pages_count: fileData.pages.length, category: fileData.category } 
           }
         ]);
       

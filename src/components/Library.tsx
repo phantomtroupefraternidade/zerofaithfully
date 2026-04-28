@@ -65,9 +65,14 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete }) => {
                 <p style={{ fontWeight: '600', fontSize: '0.9rem', marginBottom: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {file.name}
                 </p>
-                <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
-                  {file.type}
-                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center' }}>
+                  <p style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', background: 'rgba(0, 242, 255, 0.1)', padding: '2px 6px', borderRadius: '4px', display: 'inline-block' }}>
+                    {(file as any).category || 'Não classificado'}
+                  </p>
+                  <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+                    {file.type}
+                  </p>
+                </div>
               </div>
               <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
                 <button 

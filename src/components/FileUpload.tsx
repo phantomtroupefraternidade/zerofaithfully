@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FileUp, Archive, CheckCircle2 } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -20,9 +20,26 @@ export interface FileData {
   type: string;
   originalFile?: File;
   id?: number;
+  category?: string;
 }
 
+export const SURVIVAL_CATEGORIES = [
+  "Psicologia da Sobrevivência",
+  "Biologia & Primeiros Socorros",
+  "Bushcraft & Navegação",
+  "Construção de Abrigos",
+  "Obtenção de Água & Fogo",
+  "Caça, Pesca & Forrageio",
+  "Autodefesa & Combate",
+  "Comunicação & Sinalização",
+  "Sobrevivência Urbana",
+  "Ambientes Extremos",
+  "Meteorologia & Clima",
+  "Equipamentos & Ferramentas"
+];
+
 const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = ({ onFileProcessed }) => {
+  const [selectedCategory, setSelectedCategory] = useState<string>(SURVIVAL_CATEGORIES[0]);
   
   const extractImagesFromZip = async (zip: JSZip): Promise<PageElement[]> => {
     const images: PageElement[] = [];
@@ -137,7 +154,8 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
         name: file.name,
         pages,
         type,
-        originalFile: file
+        originalFile: file,
+        category: selectedCategory
       });
     } catch (error) {
       console.error('Error processing:', error);
@@ -169,6 +187,28 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
         <h2 style={{ fontSize: '2.2rem', fontWeight: '700' }}>Matriz de Ingestão <span style={{ color: 'var(--accent-cyan)' }}>Multimídia</span></h2>
         <p style={{ color: 'var(--text-secondary)' }}>Agora processando imagens e ativos visuais integrados.</p>
       </header>
+
+      <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+        <label style={{ fontSize: '0.9rem', color: 'var(--accent-cyan)' }}>Classificação de Sobrevivência:</label>
+        <select 
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          style={{ 
+            padding: '10px 15px', 
+            borderRadius: '8px', 
+            background: 'rgba(5, 5, 10, 0.8)', 
+            border: '1px solid var(--accent-cyan)', 
+            color: 'white', 
+            outline: 'none',
+            minWidth: '300px',
+            fontSize: '0.9rem'
+          }}
+        >
+          {SURVIVAL_CATEGORIES.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </div>
 
       <div {...getRootProps()} className={`upload-zone ${isDragActive ? 'active' : ''}`}>
         <input {...getInputProps()} />
