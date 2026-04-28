@@ -16,6 +16,7 @@
     "canvas-confetti": "^1.9.4",
     "epubjs": "^0.3.93",
     "framer-motion": "^12.38.0",
+    "idb-keyval": "^6.2.2",
     "jszip": "^3.10.1",
     "lucide-react": "^1.11.0",
     "mammoth": "^1.12.0",

@@ -18,6 +18,8 @@ export interface FileData {
   name: string;
   pages: PageElement[][];
   type: string;
+  originalFile?: File;
+  id?: number;
 }
 
 const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = ({ onFileProcessed }) => {
@@ -134,7 +136,8 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
       onFileProcessed({
         name: file.name,
         pages,
-        type
+        type,
+        originalFile: file
       });
     } catch (error) {
       console.error('Error processing:', error);
