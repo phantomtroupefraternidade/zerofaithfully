@@ -10,6 +10,17 @@ interface LibraryProps {
 }
 
 const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete }) => {
+  const getCoverImage = (file: any) => {
+    for (const page of file.pages) {
+      for (const el of page) {
+        if (el.type === 'image') {
+          return el.content;
+        }
+      }
+    }
+    return null;
+  };
+
   return (
     <div className="library-container">
       <h2 style={{ fontSize: '1.8rem', marginBottom: '30px' }}>Sua Biblioteca Estelar</h2>
@@ -20,20 +31,36 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete }) => {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
-          {files.map((file, index) => (
+          {files.map((file, index) => {
+            const coverImage = getCoverImage(file);
+            return (
             <div key={index} className="glass-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '15px', position: 'relative' }}>
-              <div style={{ 
-                width: '60px', 
-                height: '60px', 
-                borderRadius: '50%', 
-                background: 'rgba(0, 242, 255, 0.1)', 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center',
-                boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)'
-              }}>
-                <FileText size={30} color="var(--accent-cyan)" />
-              </div>
+              {coverImage ? (
+                <div style={{
+                  width: '100%',
+                  height: '160px',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  marginBottom: '5px',
+                  position: 'relative',
+                  border: '1px solid rgba(0, 242, 255, 0.1)'
+                }}>
+                  <img src={coverImage} alt="Capa" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              ) : (
+                <div style={{ 
+                  width: '60px', 
+                  height: '60px', 
+                  borderRadius: '50%', 
+                  background: 'rgba(0, 242, 255, 0.1)', 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)'
+                }}>
+                  <FileText size={30} color="var(--accent-cyan)" />
+                </div>
+              )}
               <div style={{ width: '100%' }}>
                 <p style={{ fontWeight: '600', fontSize: '0.9rem', marginBottom: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {file.name}
@@ -58,7 +85,8 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete }) => {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
