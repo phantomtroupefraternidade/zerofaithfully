@@ -298,7 +298,14 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
                     <img 
                       src={el.content} 
                       alt="Extracted asset" 
-                      style={{ width: '100%', height: 'auto', display: 'block', cursor: 'zoom-in' }}
+                      style={{ 
+                        width: '100%', 
+                        height: 'auto', 
+                        maxHeight: isFullScreen ? '85vh' : 'auto',
+                        objectFit: 'contain',
+                        display: 'block', 
+                        cursor: 'zoom-in' 
+                      }}
                       onClick={() => setFullScreenImage(el.content)}
                     />
                     <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', padding: '5px', borderRadius: '5px' }}>
