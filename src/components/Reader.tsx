@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Download, FileText, ChevronLeft, ChevronRight, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { PageElement } from './FileUpload';
+import jsPDF from 'jspdf';
+import JSZip from 'jszip';
+import type { FileData } from './FileUpload';
 
 interface ReaderProps {
-  file: { name: string; pages: PageElement[][]; type: string } | null;
+  file: FileData | null;
 }
 
 const Reader: React.FC<ReaderProps> = ({ file }) => {
@@ -12,6 +14,7 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const readerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -81,6 +84,95 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
   const goToNextPage = () => { if (currentPageIndex < totalPages - 1) setCurrentPageIndex(p => p + 1); };
   const goToPrevPage = () => { if (currentPageIndex > 0) setCurrentPageIndex(p => p - 1); };
 
+  const handleExport = async (format: 'original' | 'pdf' | 'txt' | 'cbz') => {
+    setIsExportMenuOpen(false);
+    
+    if (format === 'original' && (file as any).originalFile) {
+      const url = URL.createObjectURL((file as any).originalFile);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    if (format === 'txt') {
+      let content = '';
+      file.pages.forEach(page => {
+        page.forEach(el => { if (el.type === 'text') content += el.content + '\n\n'; });
+        content += '\n--- PÁGINA ---\n\n';
+      });
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${file.name.split('.')[0]}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    if (format === 'cbz') {
+      const zip = new JSZip();
+      let imgCount = 0;
+      file.pages.forEach((page, i) => {
+        page.forEach((el, j) => {
+          if (el.type === 'image') {
+            const base64Data = el.content.split(',')[1];
+            zip.file(`image_${i}_${j}.jpg`, base64Data, { base64: true });
+            imgCount++;
+          }
+        });
+      });
+      if (imgCount === 0) {
+        alert('Nenhuma imagem encontrada para criar um CBZ.');
+        return;
+      }
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${file.name.split('.')[0]}.cbz`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    if (format === 'pdf') {
+      const doc = new jsPDF();
+      let y = 10;
+      
+      file.pages.forEach((page, pIndex) => {
+        if (pIndex > 0) doc.addPage();
+        y = 10;
+        
+        page.forEach(el => {
+          if (el.type === 'text') {
+            const lines = doc.splitTextToSize(el.content, 180);
+            if (y + (lines.length * 7) > 280) {
+              doc.addPage();
+              y = 10;
+            }
+            doc.text(lines, 10, y);
+            y += lines.length * 7 + 5;
+          } else if (el.type === 'image') {
+            try {
+              if (y > 200) { doc.addPage(); y = 10; }
+              doc.addImage(el.content, 'JPEG', 10, y, 180, 100);
+              y += 110;
+            } catch (e) {
+              console.error("Erro ao adicionar imagem ao PDF", e);
+            }
+          }
+        });
+      });
+      
+      doc.save(`${file.name.split('.')[0]}.pdf`);
+      return;
+    }
+  };
+
   const readerStyles: React.CSSProperties = isFullScreen ? {
     width: '100vw',
     height: '100vh',
@@ -134,13 +226,38 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
                 </button>
             </div>
             
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '10px', position: 'relative' }}>
                 <button onClick={toggleFullScreen} className="btn-neon" style={{ padding: '10px 15px', border: '2px solid var(--accent-cyan)' }}>
                   {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
                 </button>
-                <button className="btn-neon" style={{ padding: '10px 20px', fontSize: '0.8rem' }}>
-                  <Download size={18} /> Exportar
-                </button>
+                <div style={{ position: 'relative' }}>
+                  <button onClick={() => setIsExportMenuOpen(!isExportMenuOpen)} className="btn-neon" style={{ padding: '10px 20px', fontSize: '0.8rem' }}>
+                    <Download size={18} /> Exportar
+                  </button>
+                  {isExportMenuOpen && (
+                    <div style={{ 
+                      position: 'absolute', top: '100%', right: 0, marginTop: '10px', 
+                      background: 'rgba(5,5,10,0.95)', border: '1px solid var(--accent-cyan)', 
+                      borderRadius: '8px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '5px',
+                      minWidth: '150px', zIndex: 100
+                    }}>
+                      {(file as any).originalFile && (
+                        <button onClick={() => handleExport('original')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                          Original ({file.type.toUpperCase()})
+                        </button>
+                      )}
+                      <button onClick={() => handleExport('pdf')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                        PDF
+                      </button>
+                      <button onClick={() => handleExport('txt')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                        TXT
+                      </button>
+                      <button onClick={() => handleExport('cbz')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                        CBZ (Imagens)
+                      </button>
+                    </div>
+                  )}
+                </div>
             </div>
         </div>
       </div>

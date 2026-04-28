@@ -328,3 +328,8 @@ body {
   box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
 }
 
+.hover-cyan:hover {
+  background: rgba(0, 242, 255, 0.1) !important;
+  color: var(--accent-cyan) !important;
+}
+
