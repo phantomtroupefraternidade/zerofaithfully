@@ -6,11 +6,10 @@ import Library from './components/Library';
 import Reader from './components/Reader';
 import Interpretation from './components/Interpretation';
 import confetti from 'canvas-confetti';
-
-import type { PageElement, FileData } from './components/FileUpload';
+import type { FileData } from './components/FileUpload';
 import { getLibraryFolder, setLibraryFolder, saveFileToFolder } from './utils/storage';
 import { supabase } from './lib/supabaseClient';
-import { Settings, FolderOpen } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 
 // The interface is now imported from FileUpload
 
@@ -86,7 +85,7 @@ const App: React.FC = () => {
 
     // 2. Sync with Supabase
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('books')
         .insert([
           { 

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { FileUp, Info, Book, FileCode, Archive, CheckCircle2 } from 'lucide-react';
+import { FileUp, Archive, CheckCircle2 } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 import mammoth from 'mammoth';

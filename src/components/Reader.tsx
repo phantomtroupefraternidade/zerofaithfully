@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Download, FileText, ChevronLeft, ChevronRight, Maximize2, Minimize2, X } from 'lucide-react';
+import { Search, Download, FileText, ChevronLeft, ChevronRight, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { PageElement } from './FileUpload';
 
