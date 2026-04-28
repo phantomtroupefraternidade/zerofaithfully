@@ -262,7 +262,13 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
         </div>
       </div>
 
-      <div className="document-view glass-card" style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+      <div className="document-view glass-card" style={{ 
+        flex: 1, 
+        overflowY: 'auto', 
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPageIndex}
@@ -270,7 +276,16 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.02 }}
             transition={{ duration: 0.25 }}
-            style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}
+            style={{ 
+              maxWidth: '800px', 
+              width: '100%',
+              margin: isFullScreen ? 'auto' : '0 auto', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '20px', 
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
           >
             {currentPageElements.map((el, i) => (
               <div key={i}>
