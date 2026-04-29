@@ -245,6 +245,10 @@ body {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
 }
 
+.upload-form-container {
+  transform: translateY(-3vh);
+}
+
 /* File Upload View */
 .upload-zone {
   border: 2px dashed var(--glass-border);
@@ -385,7 +389,6 @@ body {
     height: 100vh;
     border-radius: 0;
     border: none;
-    transform: translateY(-4%); /* Move entire page up by 4% */
   }
 
   .sidebar {
@@ -400,7 +403,6 @@ body {
 
   .main-view {
     padding: 15px;
-    overflow-y: auto !important; /* Ensure scrolling is allowed */
   }
 
   .window-header {
@@ -408,17 +410,17 @@ body {
     height: 50px;
   }
 
-  /* Specific home tab shift */
-  .mobile-home-shift {
-    padding-top: 20vh !important;
-  }
-
   .mobile-hide {
     display: none !important;
   }
-  
-  .mobile-scroll-padding {
-    padding-bottom: 100px !important;
+
+  .upload-form-container {
+    transform: none !important;
+    padding-bottom: 50px; /* Give some space at the bottom */
+  }
+
+  .upload-zone {
+    height: 200px;
   }
 
   /* Ensure text doesn't overflow horizontally */

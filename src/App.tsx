@@ -398,7 +398,7 @@ const App: React.FC = () => {
             </button>
             <div className={`tab-transition-container ${tabAnimClass}`}>
               {renderedTab === 'home' && (
-                <div className="mobile-home-shift" style={{ 
+                <div style={{ 
                   display: 'flex', 
                   flexDirection: 'column', 
                   alignItems: 'center', 

@@ -222,7 +222,7 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
   const supportedList = ["PDF", "EPUB", "DOCX", "TXT", "CBZ", "ZIP"];
 
   return (
-    <div className="upload-container mobile-scroll-padding">
+    <div className="upload-container">
       <header className="mobile-hide" style={{ 
         marginBottom: '40px', 
         display: 'flex', 
@@ -244,7 +244,7 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
         </p>
       </header>
 
-      <div style={{ transform: 'translateY(-3vh)' }}>
+      <div className="upload-form-container">
         <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
           <label style={{ fontSize: '0.9rem', color: 'var(--accent-cyan)' }}>Classificação de Sobrevivência:</label>
           <select 
