@@ -11,7 +11,7 @@ import confetti from 'canvas-confetti';
 import type { FileData } from './components/FileUpload';
 import { getLibraryFolder, setLibraryFolder, saveFileToFolder } from './utils/storage';
 import { supabase } from './lib/supabaseClient';
-import { FolderOpen } from 'lucide-react';
+import { FolderOpen, AlertTriangle, X } from 'lucide-react';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -27,6 +27,7 @@ const App: React.FC = () => {
   const [themeColor, setThemeColor] = useState(() => {
     return localStorage.getItem('zf_theme') || '#ffffff';
   });
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   const handleTabChange = (newTab: string) => {
     if (newTab === activeTab) return;
@@ -266,7 +267,7 @@ const App: React.FC = () => {
 
   const handleDownloadAll = async () => {
     if (!folderHandle) {
-      alert('Vincule uma pasta local primeiro para baixar os arquivos.');
+      setWarningMessage('Vincule uma pasta local primeiro para baixar os arquivos.');
       return;
     }
     let count = 0;
@@ -485,6 +486,88 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom Warning Modal */}
+      <AnimatePresence>
+        {warningMessage && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(10px)',
+            zIndex: 10000,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '20px'
+          }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="glass-card"
+              style={{
+                maxWidth: '450px',
+                width: '100%',
+                padding: '40px',
+                textAlign: 'center',
+                border: '1px solid var(--accent-cyan)',
+                boxShadow: '0 0 50px rgba(0, 242, 255, 0.2)',
+                position: 'relative'
+              }}
+            >
+              <button 
+                onClick={() => setWarningMessage(null)}
+                style={{
+                  position: 'absolute',
+                  top: '15px',
+                  right: '15px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={20} />
+              </button>
+
+              <div style={{ 
+                width: '60px', 
+                height: '60px', 
+                borderRadius: '50%', 
+                background: 'rgba(0, 242, 255, 0.1)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                margin: '0 auto 25px'
+              }}>
+                <AlertTriangle size={30} color="var(--accent-cyan)" />
+              </div>
+
+              <h3 style={{ fontSize: '1.4rem', marginBottom: '15px', color: 'white' }}>Ação Necessária</h3>
+              
+              <p style={{ 
+                color: 'var(--text-secondary)', 
+                lineHeight: '1.6',
+                marginBottom: '30px'
+              }}>
+                {warningMessage}
+              </p>
+
+              <button 
+                onClick={() => setWarningMessage(null)}
+                className="btn-primary"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                Entendido
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
