@@ -464,11 +464,17 @@ body {
   }
 
   .nav-control-btn {
-    display: none !important; /* Arrows removed on mobile as per request */
-  }
-
-  .nav-info {
-    padding: 0 10px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(0, 242, 255, 0.1) !important;
+    color: var(--accent-cyan) !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
   }
 
   .nav-control-btn:disabled {
@@ -607,15 +613,9 @@ body {
     padding: 10px !important;
   }
 
-  /* Hide navigation bar in landscape to maximize reading area */
-  @media (orientation: landscape) {
-    .floating-reader-nav {
-      display: none !important;
-    }
-    
-    .window-header {
-      padding: 5px 10px !important;
-      margin-bottom: 10px !important;
-    }
+  /* Hide all nav buttons and page numbers in fullscreen on mobile */
+  .reader-container.is-fullscreen .floating-reader-nav,
+  .reader-container.is-fullscreen .fullscreen-side-nav-btn {
+    display: none !important;
   }
 }
