@@ -316,7 +316,7 @@ const App: React.FC = () => {
             </div>
             
             {/* Centered Sync Button */}
-            <div style={{ 
+            <div className="header-sync-container" style={{ 
               position: 'absolute', 
               left: '50%', 
               transform: 'translateX(-50%)',
