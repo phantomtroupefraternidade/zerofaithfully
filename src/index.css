@@ -536,6 +536,18 @@ body {
     justify-content: space-between !important;
   }
 
+  /* Library Image adjustments */
+  .library-book-cover {
+    height: 190px !important; /* Slightly taller to accommodate scale */
+    overflow: visible !important;
+    margin-bottom: 20px !important;
+  }
+
+  .library-book-img {
+    transform: translateY(12px) scale(1.2) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
   .header-sync-container {
     left: auto !important;
     right: 15px !important;

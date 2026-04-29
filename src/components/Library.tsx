@@ -191,7 +191,7 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete, onDownload
             return (
             <div key={file.id || index} className="glass-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '15px', position: 'relative' }}>
               {coverImage ? (
-                <div style={{
+                <div className="library-book-cover" style={{
                   width: '100%',
                   height: '160px',
                   borderRadius: '12px',
@@ -200,7 +200,7 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete, onDownload
                   position: 'relative',
                   border: '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
-                  <img src={coverImage} alt="Capa" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img className="library-book-img" src={coverImage} alt="Capa" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               ) : (
                 <div style={{ 
