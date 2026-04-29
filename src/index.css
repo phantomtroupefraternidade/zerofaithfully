@@ -433,14 +433,20 @@ body {
     display: none !important;
   }
 
+  /* Disable transforms on mobile to allow fixed positioning to work correctly */
+  .tab-entering, .tab-exiting, .desktop-app, .home-container, .home-card {
+    transform: none !important;
+    animation: fadeIn 0.3s ease-out forwards !important;
+  }
+
   /* Reader Export button label removal */
   .btn-export span {
     display: none;
   }
 
-  /* Reader Navigation repositioning */
+  /* Reader Navigation repositioning - FIXED on viewport */
   .reader-navigation {
-    position: absolute !important;
+    position: fixed !important;
     bottom: 20px !important;
     top: auto !important;
     left: 50% !important;
@@ -449,14 +455,19 @@ body {
     padding: 10px 30px !important;
     border-radius: 50px !important;
     border: 1px solid var(--accent-cyan) !important;
-    z-index: 9999 !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 242, 255, 0.3);
+    z-index: 10000 !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 242, 255, 0.4);
     width: auto !important;
     min-width: 220px !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+  }
+  
+  /* Prevent content from being hidden behind the fixed nav */
+  .document-view {
+    padding-bottom: 100px !important;
   }
   
   .reader-navigation .page-indicator {
