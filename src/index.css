@@ -612,23 +612,16 @@ body {
   .btn-export {
     padding: 10px !important;
   }
-}
 
-/* Landscape Mobile Optimization */
-@media (max-width: 932px) and (orientation: landscape) {
-  .floating-reader-nav {
-    bottom: 10px !important;
-    padding: 4px !important;
-    scale: 0.85;
-    background: rgba(5, 5, 10, 0.8) !important;
-  }
-  
-  .nav-control-btn {
-    width: 38px !important;
-    height: 38px !important;
-  }
-
-  .nav-info .current {
-    font-size: 1rem !important;
+  /* Hide navigation bar in landscape to maximize reading area */
+  @media (orientation: landscape) {
+    .floating-reader-nav {
+      display: none !important;
+    }
+    
+    .window-header {
+      padding: 5px 10px !important;
+      margin-bottom: 10px !important;
+    }
   }
 }

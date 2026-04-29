@@ -264,10 +264,17 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPageIndex}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.02 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.25 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(_e, info) => {
+              if (info.offset.x < -100) goToNextPage();
+              if (info.offset.x > 100) goToPrevPage();
+            }}
             style={{ 
               maxWidth: isFullScreen ? '100%' : '800px', 
               width: '100%',
@@ -279,8 +286,10 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
               justifyContent: 'flex-start',
               minHeight: '100%',
               paddingTop: currentPageElements.some(el => el.type === 'image') ? '0px' : '40px',
-              paddingBottom: '120px'
+              paddingBottom: '120px',
+              cursor: 'grab'
             }}
+            whileTap={{ cursor: 'grabbing' }}
           >
             {currentPageElements.map((el, i) => (
               <div key={i} style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: isFullScreen ? '0 5%' : '0 40px' }}>
