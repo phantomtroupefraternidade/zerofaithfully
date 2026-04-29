@@ -204,7 +204,7 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
         border: '1px solid var(--glass-border)',
         boxShadow: isFullScreen ? '0 0 30px rgba(0, 242, 255, 0.1)' : 'none'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
+        <div className="header-left-area" style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
           <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '5px 15px', flex: 0.6 }}>
             <Search size={18} color="var(--accent-cyan)" />
             <input 
@@ -217,32 +217,13 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
           </div>
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div className="reader-header-actions" style={{ display: 'flex', gap: '10px', position: 'relative' }}>
-                <button onClick={toggleFullScreen} className="btn-neon btn-fullscreen-toggle" style={{ padding: '10px 15px', border: '2px solid var(--accent-cyan)' }}>
-                    {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+        <div className="header-right-area" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            {/* Navigation removed from here */}
+            
+            <div style={{ display: 'flex', gap: '10px', position: 'relative' }}>
+                <button onClick={toggleFullScreen} className="btn-neon" style={{ padding: '10px 15px', border: '2px solid var(--accent-cyan)' }}>
+                  {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
                 </button>
-                
-                <div className="search-input-container" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <Search size={16} style={{ position: 'absolute', left: '12px', color: 'var(--accent-cyan)', opacity: 0.7 }} />
-                  <input 
-                    type="text" 
-                    placeholder="Buscar..." 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(0, 242, 255, 0.2)',
-                      borderRadius: '8px',
-                      padding: '8px 12px 8px 35px',
-                      color: 'white',
-                      fontSize: '0.85rem',
-                      width: isFullScreen ? '200px' : '150px',
-                      transition: 'all 0.3s ease',
-                      outline: 'none'
-                    }}
-                  />
-                </div>
                 <div style={{ position: 'relative' }}>
                   <button onClick={() => setIsExportMenuOpen(!isExportMenuOpen)} className="btn-neon btn-export" style={{ padding: '10px 20px', fontSize: '0.8rem' }}>
                     <Download size={18} /> <span>Exportar</span>
