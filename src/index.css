@@ -475,6 +475,11 @@ body {
     letter-spacing: 0.5px !important;
   }
 
+  .library-header {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
   .header-sync-container {
     left: auto !important;
     right: 15px !important;

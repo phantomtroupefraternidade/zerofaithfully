@@ -117,9 +117,9 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete, onDownload
   return (
     <div className="library-container" style={{ position: 'relative', height: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="library-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <h2 style={{ fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.5px' }}>Biblioteca Digital</h2>
-          <span style={{
+          <span className="nucleo-badge" style={{
             fontSize: '0.65rem',
             color: 'var(--accent-cyan)',
             background: 'rgba(0, 242, 255, 0.08)',
