@@ -27,9 +27,16 @@ export async function setLibraryFolder() {
   }
 }
 
-export async function saveFileToFolder(folderHandle: any, fileName: string, blob: Blob) {
+export async function saveFileToFolder(folderHandle: any, fileName: string, blob: Blob, category?: string) {
   try {
-    const fileHandle = await folderHandle.getFileHandle(fileName, { create: true });
+    let targetFolder = folderHandle;
+    
+    // Create subdirectory if category is provided
+    if (category) {
+      targetFolder = await folderHandle.getDirectoryHandle(category, { create: true });
+    }
+
+    const fileHandle = await targetFolder.getFileHandle(fileName, { create: true });
     const writable = await fileHandle.createWritable();
     await writable.write(blob);
     await writable.close();

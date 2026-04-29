@@ -23,23 +23,54 @@ export interface FileData {
   category?: string;
 }
 
-export const SURVIVAL_CATEGORIES = [
-  "Psicologia da Sobrevivência",
-  "Biologia & Primeiros Socorros",
-  "Bushcraft & Navegação",
-  "Construção de Abrigos",
+export const DOCUMENT_CATEGORIES = [
+  // --- HUMANISMO (12) ---
+  "Psicologia & Comportamento",
+  "Artes Visuais & Design",
+  "Música & Teoria Musical",
+  "Filosofia & Ética",
+  "Fantasia & Conspirações",
+  "Literatura & Poesia",
+  "Sociologia & Sociedade",
+  "Antropologia Cultural",
+  "Linguística & Idiomas",
+  "Teologia & Espiritualidade",
+  "Pedagogia & Educação",
+  "Direito & Cidadania",
+
+  // --- CIÊNCIAS (12) ---
+  "Física Teórica & Aplicada",
+  "Química & Materiais",
+  "Biologia & Genética",
+  "Matemática & Estatística",
+  "Astronomia & Astrofísica",
+  "Geologia & Paleontologia",
+  "Ecologia & Meio Ambiente",
+  "Medicina & Saúde",
+  "Engenharia & Tecnologia",
+  "Neurociência & Cognição",
+  "Informática & I.A.",
+  "Robótica & Automação",
+
+  // --- SOBREVIVÊNCIA (12) ---
+  "Bushcraft & Vida Selvagem",
+  "Navegação & Cartografia",
+  "Abrigos & Acampamento",
   "Obtenção de Água & Fogo",
   "Caça, Pesca & Forrageio",
-  "Autodefesa & Combate",
-  "Comunicação & Sinalização",
+  "Primeiros Socorros Táticos",
+  "Autodefesa & Estratégia",
+  "Comunicação & Sinais",
   "Sobrevivência Urbana",
   "Ambientes Extremos",
-  "Meteorologia & Clima",
-  "Equipamentos & Ferramentas"
+  "Equipamentos & Ferramentas",
+  "Preparação para Desastres"
 ];
 
 const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = ({ onFileProcessed }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>(SURVIVAL_CATEGORIES[0]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const extractImagesFromZip = async (zip: JSZip): Promise<PageElement[]> => {
     const images: PageElement[] = [];
@@ -54,7 +85,7 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
     return images;
   };
 
-  const processFile = async (file: File) => {
+  const processFile = async (file: File, category: string) => {
     let pages: PageElement[][] = [];
     const type = file.name.split('.').pop()?.toLowerCase() || '';
 
@@ -155,7 +186,7 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
         pages,
         type,
         originalFile: file,
-        category: selectedCategory
+        category: category
       });
     } catch (error) {
       console.error('Error processing:', error);
@@ -164,8 +195,17 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) processFile(acceptedFiles[0]);
+    if (acceptedFiles.length > 0) setPendingFile(acceptedFiles[0]);
   }, []);
+
+  const handleConfirmUpload = async () => {
+    if (!pendingFile || !selectedCategory) return;
+    setIsProcessing(true);
+    await processFile(pendingFile, selectedCategory);
+    setPendingFile(null);
+    setSelectedCategory('');
+    setIsProcessing(false);
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -183,9 +223,25 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
 
   return (
     <div className="upload-container">
-      <header style={{ marginBottom: '30px' }}>
-        <h2 style={{ fontSize: '2.2rem', fontWeight: '700' }}>Matriz de Ingestão <span style={{ color: 'var(--accent-cyan)' }}>Multimídia</span></h2>
-        <p style={{ color: 'var(--text-secondary)' }}>Agora processando imagens e ativos visuais integrados.</p>
+      <header style={{ 
+        marginBottom: '40px', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '20px'
+      }}>
+        <h2 style={{ fontSize: '2.2rem', fontWeight: '700', letterSpacing: '-1px' }}>
+          Matriz de Ingestão <span style={{ color: 'var(--accent-cyan)' }}>Multimídia</span>
+        </h2>
+        <p style={{ 
+          fontSize: '2.2rem', 
+          fontWeight: '700', 
+          letterSpacing: '-1px',
+          color: 'white'
+        }}>
+          <span style={{ color: 'var(--accent-purple)' }}>Processamento</span> Integrado
+        </p>
       </header>
 
       <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
@@ -201,10 +257,16 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
             color: 'white', 
             outline: 'none',
             minWidth: '300px',
-            fontSize: '0.9rem'
+            fontSize: '0.9rem',
+            textAlign: 'center',
+            textAlignLast: 'center',
+            WebkitAppearance: 'none',
+            MozAppearance: 'none',
+            appearance: 'none'
           }}
         >
-          {SURVIVAL_CATEGORIES.map(cat => (
+          <option value="" disabled>Selecione uma classificação</option>
+          {DOCUMENT_CATEGORIES.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
@@ -213,13 +275,29 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
       <div {...getRootProps()} className={`upload-zone ${isDragActive ? 'active' : ''}`}>
         <input {...getInputProps()} />
         <FileUp size={64} color="var(--accent-cyan)" />
-        <p>Arraste seu arquivo (Imagens serão extraídas automaticamente)</p>
+        <p>{pendingFile ? `Arquivo selecionado: ${pendingFile.name}` : 'Arraste seu arquivo (Imagens serão extraídas automaticamente)'}</p>
       </div>
 
       <div style={{ marginTop: '30px', display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
         {supportedList.map(ext => (
           <span key={ext} className="glass-card" style={{ padding: '4px 10px', fontSize: '0.65rem', border: '1px solid rgba(0, 242, 255, 0.2)', color: 'var(--accent-cyan)' }}>{ext}</span>
         ))}
+      </div>
+
+      <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
+        <button 
+          className="btn-primary" 
+          onClick={handleConfirmUpload}
+          disabled={!pendingFile || !selectedCategory || isProcessing}
+          style={{ 
+            padding: '15px 40px', 
+            fontSize: '1.1rem',
+            opacity: (!pendingFile || !selectedCategory || isProcessing) ? 0.5 : 1,
+            cursor: (!pendingFile || !selectedCategory || isProcessing) ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {isProcessing ? 'Processando...' : 'Confirmar Upload'}
+        </button>
       </div>
 
       <div style={{ marginTop: '40px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '15px' }}>

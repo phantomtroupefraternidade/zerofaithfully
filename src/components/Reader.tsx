@@ -271,7 +271,9 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
         overflowY: 'auto', 
         padding: '20px',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: currentPageElements.length > 0 ? 'flex-start' : 'center'
       }}>
         <AnimatePresence mode="wait">
           <motion.div
@@ -281,34 +283,48 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
             exit={{ opacity: 0, scale: 1.02 }}
             transition={{ duration: 0.25 }}
             style={{ 
-              maxWidth: '800px', 
+              maxWidth: isFullScreen ? '100%' : '800px', 
               width: '100%',
-              margin: isFullScreen ? 'auto' : '0 auto', 
+              margin: 'auto', 
               display: 'flex', 
               flexDirection: 'column', 
-              gap: '20px', 
+              gap: '25px', 
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'flex-start',
+              minHeight: '100%',
+              paddingTop: currentPageElements.some(el => el.type === 'image') ? '0px' : '40px',
+              paddingBottom: '120px'
             }}
           >
             {currentPageElements.map((el, i) => (
-              <div key={i}>
+              <div key={i} style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: isFullScreen ? '0 5%' : '0 40px' }}>
                 {el.type === 'text' ? (
-                  <p className="document-content" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8', color: '#e0e0e0', textAlign: 'center' }}>
+                  <p className="document-content" style={{ 
+                    whiteSpace: 'pre-wrap', 
+                    lineHeight: '1.9', 
+                    color: '#e0e0e0', 
+                    textAlign: 'justify', 
+                    width: '100%',
+                    maxWidth: isFullScreen ? '95%' : '700px',
+                    fontSize: isFullScreen ? '1.25rem' : '1.1rem',
+                    padding: '0 20px',
+                    borderLeft: '1px solid rgba(0, 242, 255, 0.1)'
+                  }}>
                     {highlightText(el.content, searchTerm)}
                   </p>
                 ) : (
-                  <div style={{ position: 'relative', marginTop: '10px', marginBottom: '10px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+                  <div style={{ position: 'relative', marginTop: '10px', marginBottom: '10px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)', display: 'inline-block', maxWidth: '100%' }}>
                     <img 
                       src={el.content} 
                       alt="Extracted asset" 
                       style={{ 
-                        width: '100%', 
+                        maxWidth: '100%', 
                         height: 'auto', 
-                        maxHeight: isFullScreen ? '85vh' : 'auto',
+                        maxHeight: isFullScreen ? '90vh' : 'calc(85vh - 220px)',
                         objectFit: 'contain',
                         display: 'block', 
-                        cursor: 'zoom-in' 
+                        cursor: 'zoom-in',
+                        margin: '0 auto'
                       }}
                       onClick={() => setFullScreenImage(el.content)}
                     />

@@ -14,6 +14,7 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/jszip": "^3.4.0",
     "canvas-confetti": "^1.9.4",
+    "date-fns": "^4.1.0",
     "epubjs": "^0.3.93",
     "framer-motion": "^12.38.0",
     "idb-keyval": "^6.2.2",
