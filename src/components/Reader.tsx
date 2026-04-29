@@ -340,7 +340,7 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
 
       {/* Refactored Floating Navigation Control */}
       {!(isFullScreen && isMobile) && (
-        <div className="floating-reader-nav">
+        <div className="floating-reader-nav" style={{ display: (isFullScreen && isMobile) ? 'none' : 'flex' }}>
           <button 
             onClick={goToPrevPage} 
             disabled={currentPageIndex === 0} 
@@ -393,7 +393,8 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
                 cursor: currentPageIndex === 0 ? 'not-allowed' : 'pointer',
                 opacity: currentPageIndex === 0 ? 0.3 : 1,
                 backdropFilter: 'blur(10px)',
-                color: 'var(--accent-cyan)'
+                color: 'var(--accent-cyan)',
+                display: (isFullScreen && isMobile) ? 'none' : 'flex'
               }}
             >
               <ChevronLeft size={40} />
@@ -422,7 +423,8 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
                 cursor: currentPageIndex === totalPages - 1 ? 'not-allowed' : 'pointer',
                 opacity: currentPageIndex === totalPages - 1 ? 0.3 : 1,
                 backdropFilter: 'blur(10px)',
-                color: 'var(--accent-cyan)'
+                color: 'var(--accent-cyan)',
+                display: (isFullScreen && isMobile) ? 'none' : 'flex'
               }}
             >
               <ChevronRight size={40} />
