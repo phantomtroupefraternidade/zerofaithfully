@@ -15,6 +15,8 @@ import { FolderOpen, Download } from 'lucide-react';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
+  const [renderedTab, setRenderedTab] = useState('home');
+  const [tabAnimClass, setTabAnimClass] = useState('tab-entering');
   const [files, setFiles] = useState<FileData[]>([]);
   const [selectedFile, setSelectedFile] = useState<FileData | null>(null);
   const [folderHandle, setFolderHandle] = useState<any>(null);
@@ -26,36 +28,91 @@ const App: React.FC = () => {
     return localStorage.getItem('zf_theme') || '#ffffff';
   });
 
+  const handleTabChange = (newTab: string) => {
+    if (newTab === activeTab) return;
+    setActiveTab(newTab);
+    setTabAnimClass('tab-exiting');
+    setTimeout(() => {
+      setRenderedTab(newTab);
+      setTabAnimClass('tab-entering');
+    }, 150);
+  };
+
   // Sync theme color with CSS variable
   useEffect(() => {
     document.documentElement.style.setProperty('--accent-color', themeColor);
     localStorage.setItem('zf_theme', themeColor);
   }, [themeColor]);
+  // Fetch shared library from Supabase on mount
   useEffect(() => {
-    const initDB = async () => {
-      const request = indexedDB.open('ZeroFaithfullyDB', 1);
-      request.onupgradeneeded = (e: any) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains('library')) {
-          db.createObjectStore('library', { keyPath: 'id', autoIncrement: true });
+    const fetchLibrary = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('zf_books')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        if (data) {
+          const remoteFiles: FileData[] = data.map((row: any) => ({
+            id: row.id,
+            name: row.name,
+            type: row.type,
+            pages: [],
+            category: row.metadata?.category,
+            metadata: row.metadata,
+            cover_image: row.cover_image,
+            storage_path: row.storage_path,
+          }));
+          setFiles(remoteFiles);
         }
-      };
-
-      request.onsuccess = (e: any) => {
-        const db = e.target.result;
-        const transaction = db.transaction(['library'], 'readonly');
-        const store = transaction.objectStore('library');
-        const getAll = store.getAll();
-        getAll.onsuccess = () => {
-          setFiles(getAll.result);
-        };
-      };
-
-      const handle = await getLibraryFolder();
-      if (handle) setFolderHandle(handle);
+      } catch (e) {
+        console.warn('Could not fetch library from Supabase:', e);
+      }
     };
 
-    initDB();
+    fetchLibrary();
+
+    // Real-time subscription for shared library
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'zf_books'
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newBook = payload.new;
+            setFiles(prev => {
+              // Avoid duplicates
+              if (prev.some(f => f.id === newBook.id)) return prev;
+              return [{
+                id: newBook.id,
+                name: newBook.name,
+                type: newBook.type,
+                pages: [],
+                category: newBook.metadata?.category,
+                metadata: newBook.metadata,
+                cover_image: newBook.cover_image,
+                storage_path: newBook.storage_path,
+              }, ...prev];
+            });
+          } else if (payload.eventType === 'DELETE') {
+            setFiles(prev => prev.filter(f => f.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    // Also grab folder handle
+    getLibraryFolder().then(h => { if (h) setFolderHandle(h); });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleLogin = (user: { name: string; photo_url: string | null }) => {
@@ -69,7 +126,7 @@ const App: React.FC = () => {
 
     const ping = async () => {
       await supabase
-        .from('profiles')
+        .from('zf_profiles')
         .update({ last_login: new Date().toISOString() })
         .eq('name', currentUser.name);
     };
@@ -92,76 +149,118 @@ const App: React.FC = () => {
     }
   };
 
-  const saveToDB = (newFiles: FileData[]) => {
-    const request = indexedDB.open('ZeroFaithfullyDB', 1);
-    request.onsuccess = (e: any) => {
-      const db = e.target.result;
-      const transaction = db.transaction(['library'], 'readwrite');
-      const store = transaction.objectStore('library');
-      store.clear();
-      newFiles.forEach(f => store.add(f));
-    };
-  };
-
   const handleFileProcessed = async (fileData: FileData) => {
-    const fileId = Date.now();
-    const updatedFiles = [...files, { ...fileData, id: fileId }];
-    setFiles(updatedFiles);
-    saveToDB(updatedFiles);
-    setSelectedFile(fileData);
-    setActiveTab('reader');
-
-    if (folderHandle && fileData.originalFile) {
-      await saveFileToFolder(folderHandle, fileData.name, fileData.originalFile, fileData.category);
+    const fileId = String(Date.now());
+    
+    // Extract first image as cover
+    let coverImage: string | null = null;
+    for (const page of fileData.pages) {
+      for (const el of page) {
+        if (el.type === 'image') { coverImage = el.content; break; }
+      }
+      if (coverImage) break;
     }
+
+    let storagePath: string | null = null;
 
     try {
-      const { error } = await supabase
-        .from('books')
-        .insert([
-          { 
-            id: fileId,
-            name: fileData.name, 
-            type: fileData.type, 
-            metadata: { 
-              pages_count: fileData.pages.length, 
-              category: fileData.category,
-              uploaded_by: currentUser?.name || 'Agente Anônimo',
-              uploader_photo: currentUser?.photo_url
-            } 
-          }
-        ]);
-      
+      // 1. Upload file to Supabase Storage
       if (fileData.originalFile) {
-        await supabase.storage
+        const path = `${fileId}/${fileData.name}`;
+        const { error: storageErr } = await supabase.storage
           .from('books')
-          .upload(`${fileId}/${fileData.name}`, fileData.originalFile);
+          .upload(path, fileData.originalFile, { upsert: true });
+        
+        if (storageErr) {
+          console.error('Storage upload error:', storageErr);
+          alert('Erro ao enviar arquivo para o storage. Verifique sua conexão.');
+          return; // Stop here if storage fails
+        }
+        storagePath = path;
       }
-      
-      if (error) console.error("Supabase sync error:", error);
+
+      // 2. Insert into zf_books
+      const { data: inserted, error } = await supabase
+        .from('zf_books')
+        .insert([{
+          id: fileId,
+          name: fileData.name,
+          type: fileData.type,
+          cover_image: coverImage,
+          storage_path: storagePath,
+          metadata: {
+            pages_count: fileData.pages.length,
+            category: fileData.category,
+            uploaded_by: currentUser?.name || 'Agente Anônimo',
+            uploader_photo: currentUser?.photo_url
+          }
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase insert error:', error);
+        alert('Erro ao registrar livro no banco de dados.');
+      } else if (inserted) {
+        const newEntry: FileData = {
+          ...fileData,
+          id: fileId as any,
+          cover_image: coverImage,
+          storage_path: storagePath,
+          metadata: inserted.metadata,
+        };
+        
+        // We update state immediately for the uploader, 
+        // while others will receive it via real-time subscription.
+        setFiles(prev => {
+          if (prev.some(f => f.id === fileId)) return prev;
+          return [newEntry, ...prev];
+        });
+        
+        setSelectedFile(newEntry);
+        handleTabChange('reader');
+
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: [themeColor, '#888888', '#cccccc']
+        });
+      }
     } catch (e) {
-      console.warn("Supabase not configured or unreachable.");
+      console.error('Critical error during upload:', e);
+      alert('Ocorreu um erro crítico no processamento do upload.');
     }
-    
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: [themeColor, '#888888', '#cccccc']
-    });
+
+    // Always try to save locally if folder is linked
+    if (folderHandle && fileData.originalFile) {
+      try {
+        await saveFileToFolder(folderHandle, fileData.name, fileData.originalFile, fileData.category);
+      } catch (err) {
+        console.warn('Failed local save:', err);
+      }
+    }
   };
 
   const handleSelectFile = (file: FileData) => {
     setSelectedFile(file);
-    setActiveTab('reader');
+    handleTabChange('reader');
   };
 
-  const handleDeleteFile = (index: number) => {
+  const handleDeleteFile = async (index: number) => {
+    const fileToDelete = files[index];
     const updatedFiles = files.filter((_, i) => i !== index);
     setFiles(updatedFiles);
-    saveToDB(updatedFiles);
-    if (selectedFile === files[index]) {
-      setSelectedFile(null);
+    if (selectedFile === fileToDelete) setSelectedFile(null);
+
+    // Delete from Supabase
+    try {
+      if (fileToDelete.storage_path) {
+        await supabase.storage.from('books').remove([fileToDelete.storage_path]);
+      }
+      await supabase.from('zf_books').delete().eq('id', String(fileToDelete.id));
+    } catch (e) {
+      console.warn('Could not delete from Supabase:', e);
     }
   };
 
@@ -204,7 +303,7 @@ const App: React.FC = () => {
       <div className="desktop-app">
         <Sidebar 
           activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+          setActiveTab={handleTabChange} 
           themeColor={themeColor}
           setThemeColor={setThemeColor}
           currentUser={currentUser}
@@ -297,98 +396,100 @@ const App: React.FC = () => {
               <Download size={12} />
               Baixar Todos
             </button>
-            {activeTab === 'home' && (
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                height: '100%', 
-                padding: '0 10%',
-                animation: 'fadeIn 0.8s ease-out'
-              }}>
-                <div className="glass-card" style={{ 
-                  padding: '80px 60px', 
-                  textAlign: 'center', 
-                  maxWidth: '900px',
-                  background: 'rgba(255, 255, 255, 0.01)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  boxShadow: '0 0 40px rgba(0,0,0,0.4)'
+            <div className={`tab-transition-container ${tabAnimClass}`}>
+              {renderedTab === 'home' && (
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  height: '100%', 
+                  padding: '0 10%',
+                  animation: 'fadeIn 0.8s ease-out'
                 }}>
-                  <h2 style={{ fontSize: '3.5rem', fontWeight: '900', marginBottom: '30px', letterSpacing: '-3px', color: 'white' }}>
-                    PLATAFORMA <span style={{ color: '#888' }}>DIGITAL</span>
-                  </h2>
-                  
-                  <div style={{ 
-                    fontSize: '1.3rem', 
-                    lineHeight: '1.8', 
-                    color: 'var(--text-secondary)', 
-                    marginBottom: '40px',
-                    fontWeight: '300'
+                  <div className="glass-card" style={{ 
+                    padding: '80px 60px', 
+                    textAlign: 'center', 
+                    maxWidth: '900px',
+                    background: 'rgba(255, 255, 255, 0.01)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 0 40px rgba(0,0,0,0.4)'
                   }}>
-                    Ambiente especializado em <span style={{ color: 'white', fontWeight: '600' }}>interpretação</span>, 
-                    <span style={{ color: '#888', fontWeight: '600' }}> conversão</span> e 
-                    <span style={{ color: 'white', fontWeight: '600' }}> armazenamento</span> de livros digitais.
-                  </div>
+                    <h2 style={{ fontSize: '3.5rem', fontWeight: '900', marginBottom: '30px', letterSpacing: '-3px', color: 'white' }}>
+                      PLATAFORMA <span style={{ color: '#888' }}>DIGITAL</span>
+                    </h2>
+                    
+                    <div style={{ 
+                      fontSize: '1.3rem', 
+                      lineHeight: '1.8', 
+                      color: 'var(--text-secondary)', 
+                      marginBottom: '40px',
+                      fontWeight: '300'
+                    }}>
+                      Ambiente especializado em <span style={{ color: 'white', fontWeight: '600' }}>interpretação</span>, 
+                      <span style={{ color: '#888', fontWeight: '600' }}> conversão</span> e 
+                      <span style={{ color: 'white', fontWeight: '600' }}> armazenamento</span> de livros digitais.
+                    </div>
 
-                  <div style={{ 
-                    height: '1px', 
-                    background: 'linear-gradient(90deg, transparent, var(--glass-border), transparent)', 
-                    margin: '40px auto', 
-                    width: '60%' 
-                  }}></div>
+                    <div style={{ 
+                      height: '1px', 
+                      background: 'linear-gradient(90deg, transparent, var(--glass-border), transparent)', 
+                      margin: '40px auto', 
+                      width: '60%' 
+                    }}></div>
 
-                  <p style={{ 
-                    fontSize: '1.1rem', 
-                    lineHeight: '2', 
-                    color: 'rgba(255,255,255,0.7)',
-                    maxWidth: '700px',
-                    margin: '0 auto'
-                  }}>
-                    Desenvolvida com o propósito de produzir um ecossistema de imersão literária, 
-                    reunindo obras diversas e ferramentas de análise neural para um grupo seleto de pessoas.
-                  </p>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '50px' }}>
-                    <button 
-                      onClick={() => setActiveTab('library')}
-                      className="btn-primary" 
-                      style={{ padding: '15px 40px', fontSize: '1rem', width: 'auto' }}
-                    >
-                      Acessar a biblioteca digital
-                    </button>
+                    <p style={{ 
+                      fontSize: '1.1rem', 
+                      lineHeight: '2', 
+                      color: 'rgba(255,255,255,0.7)',
+                      maxWidth: '700px',
+                      margin: '0 auto'
+                    }}>
+                      Desenvolvida com o propósito de produzir um ecossistema de imersão literária, 
+                      reunindo obras diversas e ferramentas de análise neural para um grupo seleto de pessoas.
+                    </p>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '50px' }}>
+                      <button 
+                        onClick={() => handleTabChange('library')}
+                        className="btn-primary" 
+                        style={{ padding: '15px 40px', fontSize: '1rem', width: 'auto' }}
+                      >
+                        Acessar a biblioteca digital
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {activeTab === 'upload' && (
-              <FileUpload onFileProcessed={handleFileProcessed} />
-            )}
-            
-            {activeTab === 'library' && (
-              <Library 
-                files={files} 
-                onSelect={handleSelectFile} 
-                onDelete={handleDeleteFile} 
-              />
-            )}
-            
-            {activeTab === 'reader' && (
-              <Reader file={selectedFile} />
-            )}
-            
-            {activeTab === 'interpretation' && (
-              <Interpretation 
-                file={selectedFile} 
-                allFiles={files} 
-                onSelectFile={setSelectedFile}
-              />
-            )}
+              {renderedTab === 'upload' && (
+                <FileUpload onFileProcessed={handleFileProcessed} />
+              )}
+              
+              {renderedTab === 'library' && (
+                <Library 
+                  files={files} 
+                  onSelect={handleSelectFile} 
+                  onDelete={handleDeleteFile} 
+                />
+              )}
+              
+              {renderedTab === 'reader' && (
+                <Reader file={selectedFile} />
+              )}
+              
+              {renderedTab === 'interpretation' && (
+                <Interpretation 
+                  file={selectedFile} 
+                  allFiles={files} 
+                  onSelectFile={setSelectedFile}
+                />
+              )}
 
-            {activeTab === 'history' && (
-              <HistoryView />
-            )}
+              {renderedTab === 'history' && (
+                <HistoryView />
+              )}
+            </div>
           </main>
         </div>
 

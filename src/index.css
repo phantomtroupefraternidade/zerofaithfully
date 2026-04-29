@@ -341,3 +341,25 @@ body {
   color: var(--accent-cyan) !important;
 }
 
+@keyframes slideOutLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-50px); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.tab-transition-container {
+  width: 100%;
+  height: 100%;
+}
+
+.tab-entering {
+  animation: slideInLeft 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.tab-exiting {
+  animation: slideOutLeft 0.15s cubic-bezier(0.8, 0, 0.8, 1) forwards;
+}

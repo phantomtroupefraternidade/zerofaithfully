@@ -19,7 +19,7 @@ const HistoryView: React.FC = () => {
     const fetchHistory = async () => {
       try {
         const { data, error } = await supabase
-          .from('profiles')
+          .from('zf_profiles')
           .select('*')
           .order('last_login', { ascending: false })
           .limit(20);
@@ -40,9 +40,9 @@ const HistoryView: React.FC = () => {
 
     // Realtime subscription to see new logins live
     const subscription = supabase
-      .channel('public:profiles')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, fetchHistory)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, fetchHistory)
+      .channel('public:zf_profiles')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'zf_profiles' }, fetchHistory)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'zf_profiles' }, fetchHistory)
       .subscribe();
 
     return () => {

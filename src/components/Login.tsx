@@ -43,7 +43,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
       // 1. Check if user exists
       const { data: existingUser, error: fetchError } = await supabase
-        .from('profiles')
+        .from('zf_profiles')
         .select('*')
         .eq('name', name)
         .single();
@@ -66,11 +66,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
         // Update last login
         await supabase
-          .from('profiles')
+          .from('zf_profiles')
           .update({ last_login: new Date().toISOString() })
           .eq('id', existingUser.id);
 
-        await supabase.from('access_logs').insert([{ profile_id: existingUser.id }]);
+        await supabase.from('zf_access_logs').insert([{ profile_id: existingUser.id }]);
         onLogin({ name: existingUser.name, photo_url: existingUser.photo_url });
 
       } else {
@@ -105,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         }
 
         const { data: newUser, error: insertError } = await supabase
-          .from('profiles')
+          .from('zf_profiles')
           .insert([{ 
             name, 
             password,
@@ -117,7 +117,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         
         if (insertError) throw insertError;
 
-        await supabase.from('access_logs').insert([{ profile_id: newUser.id }]);
+        await supabase.from('zf_access_logs').insert([{ profile_id: newUser.id }]);
         onLogin({ name: newUser.name, photo_url: newUser.photo_url });
       }
     } catch (err: any) {
