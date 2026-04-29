@@ -8,6 +8,7 @@ import Interpretation from './components/Interpretation';
 import Login from './components/Login';
 import HistoryView from './components/HistoryView';
 import confetti from 'canvas-confetti';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { FileData } from './components/FileUpload';
 import { getLibraryFolder, setLibraryFolder, saveFileToFolder } from './utils/storage';
 import { supabase } from './lib/supabaseClient';
