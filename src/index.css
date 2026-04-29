@@ -613,9 +613,10 @@ body {
     padding: 10px !important;
   }
 
-  /* Hide all nav buttons and page numbers in fullscreen on mobile */
+  /* Hide all nav buttons, page numbers and HEADER in fullscreen on mobile */
   .reader-container.is-fullscreen .floating-reader-nav,
-  .reader-container.is-fullscreen .fullscreen-side-nav-btn {
+  .reader-container.is-fullscreen .fullscreen-side-nav-btn,
+  .reader-container.is-fullscreen .window-header {
     display: none !important;
   }
 }

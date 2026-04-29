@@ -199,7 +199,11 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
   };
 
   return (
-    <div ref={readerRef} className={`reader-container ${isFullScreen ? 'is-fullscreen' : ''}`} style={readerStyles}>
+    <div 
+      ref={readerRef} 
+      className={`reader-container ${isFullScreen ? 'is-fullscreen' : ''} ${isMobile ? 'is-mobile-view' : ''}`} 
+      style={readerStyles}
+    >
       <div className="window-header" style={{ 
         position: 'sticky', 
         top: 0, 
@@ -321,9 +325,11 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
                       }}
                       onClick={() => setFullScreenImage(el.content)}
                     />
-                    <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', padding: '5px', borderRadius: '5px' }}>
-                        <Maximize2 size={14} color="var(--accent-cyan)" />
-                    </div>
+                    {!isMobile && (
+                      <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', padding: '5px', borderRadius: '5px' }}>
+                          <Maximize2 size={14} color="var(--accent-cyan)" />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
