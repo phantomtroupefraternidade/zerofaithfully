@@ -268,6 +268,7 @@ body {
 .reader-container {
   max-width: 800px;
   margin: 0 auto;
+  position: relative;
 }
 
 .document-content {
@@ -439,21 +440,23 @@ body {
 
   /* Reader Navigation repositioning */
   .reader-navigation {
-    position: fixed !important;
-    bottom: 30px !important;
+    position: absolute !important;
+    bottom: 20px !important;
+    top: auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    background: rgba(5, 5, 20, 0.95) !important;
-    padding: 8px 25px !important;
+    background: rgba(10, 10, 25, 0.95) !important;
+    padding: 10px 30px !important;
     border-radius: 50px !important;
-    border: 2px solid var(--accent-cyan) !important;
+    border: 1px solid var(--accent-cyan) !important;
     z-index: 9999 !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 242, 255, 0.3);
     width: auto !important;
-    min-width: 200px !important;
+    min-width: 220px !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+    backdrop-filter: blur(10px);
   }
   
   .reader-navigation .page-indicator {
