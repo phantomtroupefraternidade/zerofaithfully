@@ -218,17 +218,7 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div className="reader-navigation" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <button onClick={goToPrevPage} disabled={currentPageIndex === 0} className="nav-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                  <ChevronLeft size={32} color={currentPageIndex === 0 ? '#444' : 'var(--accent-cyan)'} />
-                </button>
-                <span className="page-indicator" style={{ fontSize: '1.1rem', fontWeight: '700', letterSpacing: '2px', minWidth: '100px', textAlign: 'center', color: 'var(--accent-cyan)' }}>
-                  {currentPageIndex + 1} / {totalPages}
-                </span>
-                <button onClick={goToNextPage} disabled={currentPageIndex === totalPages - 1} className="nav-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                  <ChevronRight size={32} color={currentPageIndex === totalPages - 1 ? '#444' : 'var(--accent-cyan)'} />
-                </button>
-            </div>
+            {/* Navigation removed from here */}
             
             <div style={{ display: 'flex', gap: '10px', position: 'relative' }}>
                 <button onClick={toggleFullScreen} className="btn-neon" style={{ padding: '10px 15px', border: '2px solid var(--accent-cyan)' }}>
@@ -337,6 +327,31 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
             ))}
           </motion.div>
         </AnimatePresence>
+      </div>
+
+      {/* Refactored Floating Navigation Control */}
+      <div className="floating-reader-nav">
+        <button 
+          onClick={goToPrevPage} 
+          disabled={currentPageIndex === 0} 
+          className="nav-control-btn"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        
+        <div className="nav-info">
+          <span className="current">{currentPageIndex + 1}</span>
+          <span className="separator">/</span>
+          <span className="total">{totalPages}</span>
+        </div>
+
+        <button 
+          onClick={goToNextPage} 
+          disabled={currentPageIndex === totalPages - 1} 
+          className="nav-control-btn"
+        >
+          <ChevronRight size={24} />
+        </button>
       </div>
 
       {/* Side Navigation Buttons for FullScreen */}

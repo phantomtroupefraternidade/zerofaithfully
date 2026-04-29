@@ -444,35 +444,77 @@ body {
     display: none;
   }
 
-  /* Reader Navigation repositioning - FIXED on viewport */
-  .reader-navigation {
+  /* NEW Floating Reader Navigation */
+  .floating-reader-nav {
     position: fixed !important;
-    bottom: 20px !important;
-    top: auto !important;
+    bottom: 25px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    background: rgba(10, 10, 25, 0.95) !important;
-    padding: 10px 30px !important;
-    border-radius: 50px !important;
-    border: 1px solid var(--accent-cyan) !important;
-    z-index: 10000 !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 242, 255, 0.4);
-    width: auto !important;
-    min-width: 220px !important;
     display: flex !important;
-    justify-content: center !important;
     align-items: center !important;
-    backdrop-filter: blur(15px);
+    background: #05050a !important;
+    border: 1px solid var(--accent-cyan) !important;
+    border-radius: 16px !important;
+    padding: 6px !important;
+    z-index: 99999 !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9), 
+                0 0 30px rgba(0, 242, 255, 0.2);
+    gap: 5px !important;
+    backdrop-filter: blur(20px) !important;
+  }
+
+  .nav-control-btn {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(0, 242, 255, 0.1) !important;
+    color: var(--accent-cyan) !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .nav-control-btn:disabled {
+    opacity: 0.2 !important;
+    cursor: not-allowed !important;
+    color: #444 !important;
+  }
+
+  .nav-control-btn:active {
+    background: var(--accent-cyan) !important;
+    color: black !important;
+    transform: scale(0.9) !important;
+  }
+
+  .nav-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 0 15px !important;
+    font-family: monospace !important;
+  }
+
+  .nav-info .current {
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    color: white !important;
+  }
+
+  .nav-info .total {
+    font-size: 0.9rem !important;
+    color: #666 !important;
+  }
+
+  .nav-info .separator {
+    color: var(--accent-cyan) !important;
+    opacity: 0.5 !important;
   }
   
-  /* Prevent content from being hidden behind the fixed nav */
   .document-view {
-    padding-bottom: 100px !important;
-  }
-  
-  .reader-navigation .page-indicator {
-    font-size: 0.85rem !important;
-    min-width: 80px !important;
+    padding-bottom: 120px !important;
   }
 
   /* Library mobile adjustments */
