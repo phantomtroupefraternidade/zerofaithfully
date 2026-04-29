@@ -218,11 +218,11 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="reader-navigation" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button onClick={goToPrevPage} disabled={currentPageIndex === 0} className="nav-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                   <ChevronLeft size={32} color={currentPageIndex === 0 ? '#444' : 'var(--accent-cyan)'} />
                 </button>
-                <span style={{ fontSize: '1.1rem', fontWeight: '700', letterSpacing: '2px', minWidth: '100px', textAlign: 'center', color: 'var(--accent-cyan)' }}>
+                <span className="page-indicator" style={{ fontSize: '1.1rem', fontWeight: '700', letterSpacing: '2px', minWidth: '100px', textAlign: 'center', color: 'var(--accent-cyan)' }}>
                   {currentPageIndex + 1} / {totalPages}
                 </span>
                 <button onClick={goToNextPage} disabled={currentPageIndex === totalPages - 1} className="nav-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
@@ -235,8 +235,8 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
                   {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
                 </button>
                 <div style={{ position: 'relative' }}>
-                  <button onClick={() => setIsExportMenuOpen(!isExportMenuOpen)} className="btn-neon" style={{ padding: '10px 20px', fontSize: '0.8rem' }}>
-                    <Download size={18} /> Exportar
+                  <button onClick={() => setIsExportMenuOpen(!isExportMenuOpen)} className="btn-neon btn-export" style={{ padding: '10px 20px', fontSize: '0.8rem' }}>
+                    <Download size={18} /> <span>Exportar</span>
                   </button>
                   {isExportMenuOpen && (
                     <div style={{ 

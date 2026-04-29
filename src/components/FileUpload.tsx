@@ -231,10 +231,10 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
         flexWrap: 'wrap',
         gap: '20px'
       }}>
-        <h2 style={{ fontSize: '2.2rem', fontWeight: '700', letterSpacing: '-1px' }}>
+        <h2 className="mobile-hide" style={{ fontSize: '2.2rem', fontWeight: '700', letterSpacing: '-1px' }}>
           Matriz de Ingestão <span style={{ color: 'var(--accent-cyan)' }}>Multimídia</span>
         </h2>
-        <p style={{ 
+        <p className="mobile-hide" style={{ 
           fontSize: '2.2rem', 
           fontWeight: '700', 
           letterSpacing: '-1px',

@@ -349,7 +349,7 @@ const App: React.FC = () => {
               gap: '8px',
               paddingRight: '16px'
             }}>
-              <div style={{ 
+              <div className="header-subtitle" style={{ 
                 textAlign: 'right', 
                 fontSize: '1.2rem', 
                 letterSpacing: '1px', 

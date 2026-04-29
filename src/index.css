@@ -426,4 +426,35 @@ body {
     line-height: 1.4 !important;
     font-size: 0.9rem !important;
   }
+
+  /* Specific mobile removals */
+  .mobile-hide, .header-subtitle {
+    display: none !important;
+  }
+
+  /* Reader Export button label removal */
+  .btn-export span {
+    display: none;
+  }
+
+  /* Reader Navigation repositioning */
+  .reader-navigation {
+    position: absolute !important;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(5, 5, 15, 0.9) !important;
+    padding: 5px 20px !important;
+    border-radius: 40px !important;
+    border: 1px solid var(--accent-cyan) !important;
+    z-index: 1000;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    width: auto !important;
+    min-width: 250px;
+    justify-content: center;
+  }
+  
+  .reader-navigation .page-indicator {
+    font-size: 0.9rem !important;
+  }
 }
