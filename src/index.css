@@ -555,21 +555,6 @@ body {
     z-index: 1;
   }
 
-  .window-header {
-    flex-direction: row-reverse !important;
-    padding: 10px !important;
-    gap: 10px !important;
-  }
-
-  .header-left-area {
-    flex: 1 !important;
-  }
-
-  .header-right-area {
-    flex-shrink: 0 !important;
-    gap: 10px !important;
-  }
-
   .header-sync-container {
     left: auto !important;
     right: 15px !important;
@@ -585,5 +570,35 @@ body {
   .header-sync-container .btn-storage {
     padding: 8px !important;
     border-radius: 50% !important;
+  }
+
+  /* Reader Header Reordering */
+  .window-header {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  .search-section {
+    order: 2 !important;
+    flex: 1 !important;
+  }
+
+  .actions-section {
+    display: contents !important; /* Allow children to be ordered relative to search-section */
+  }
+
+  .fullscreen-btn {
+    order: 1 !important;
+    padding: 10px !important;
+  }
+
+  .export-wrapper {
+    order: 3 !important;
+  }
+
+  .btn-export {
+    padding: 10px !important;
   }
 }

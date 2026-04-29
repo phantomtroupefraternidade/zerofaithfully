@@ -204,54 +204,50 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
         border: '1px solid var(--glass-border)',
         boxShadow: isFullScreen ? '0 0 30px rgba(0, 242, 255, 0.1)' : 'none'
       }}>
-        <div className="header-left-area" style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
-          <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '5px 15px', flex: 0.6 }}>
+        <div className="reader-header-section search-section" style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
+          <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '5px 15px', width: '100%' }}>
             <Search size={18} color="var(--accent-cyan)" />
             <input 
               type="text" 
-              placeholder="Buscar na página..." 
+              placeholder="Buscar..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none', width: '100%' }}
+              style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none', width: '100%', fontSize: '0.8rem' }}
             />
           </div>
         </div>
         
-        <div className="header-right-area" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            {/* Navigation removed from here */}
-            
-            <div style={{ display: 'flex', gap: '10px', position: 'relative' }}>
-                <button onClick={toggleFullScreen} className="btn-neon" style={{ padding: '10px 15px', border: '2px solid var(--accent-cyan)' }}>
-                  {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-                </button>
-                <div style={{ position: 'relative' }}>
-                  <button onClick={() => setIsExportMenuOpen(!isExportMenuOpen)} className="btn-neon btn-export" style={{ padding: '10px 20px', fontSize: '0.8rem' }}>
-                    <Download size={18} /> <span>Exportar</span>
-                  </button>
-                  {isExportMenuOpen && (
-                    <div style={{ 
-                      position: 'absolute', top: '100%', right: 0, marginTop: '10px', 
-                      background: 'rgba(5,5,10,0.95)', border: '1px solid var(--accent-cyan)', 
-                      borderRadius: '8px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '5px',
-                      minWidth: '150px', zIndex: 100
-                    }}>
-                      {(file as any).originalFile && (
-                        <button onClick={() => handleExport('original')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
-                          Original ({file.type.toUpperCase()})
-                        </button>
-                      )}
-                      <button onClick={() => handleExport('pdf')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
-                        PDF
-                      </button>
-                      <button onClick={() => handleExport('txt')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
-                        TXT
-                      </button>
-                      <button onClick={() => handleExport('cbz')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
-                        CBZ (Imagens)
-                      </button>
-                    </div>
+        <div className="reader-header-section actions-section" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button onClick={toggleFullScreen} className="btn-neon fullscreen-btn" style={{ padding: '10px 15px', border: '2px solid var(--accent-cyan)' }}>
+              {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+            </button>
+            <div className="export-wrapper" style={{ position: 'relative' }}>
+              <button onClick={() => setIsExportMenuOpen(!isExportMenuOpen)} className="btn-neon btn-export" style={{ padding: '10px 20px', fontSize: '0.8rem' }}>
+                <Download size={18} /> <span>Exportar</span>
+              </button>
+              {isExportMenuOpen && (
+                <div style={{ 
+                  position: 'absolute', top: '100%', right: 0, marginTop: '10px', 
+                  background: 'rgba(5,5,10,0.95)', border: '1px solid var(--accent-cyan)', 
+                  borderRadius: '8px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '5px',
+                  minWidth: '150px', zIndex: 100
+                }}>
+                  {(file as any).originalFile && (
+                    <button onClick={() => handleExport('original')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                      Original ({file.type.toUpperCase()})
+                    </button>
                   )}
+                  <button onClick={() => handleExport('pdf')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                    PDF
+                  </button>
+                  <button onClick={() => handleExport('txt')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                    TXT
+                  </button>
+                  <button onClick={() => handleExport('cbz')} style={{ background: 'transparent', border: 'none', color: 'white', textAlign: 'left', padding: '8px', cursor: 'pointer', borderRadius: '4px' }} className="hover-cyan">
+                    CBZ (Imagens)
+                  </button>
                 </div>
+              )}
             </div>
         </div>
       </div>
