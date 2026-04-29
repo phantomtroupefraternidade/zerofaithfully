@@ -20,8 +20,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
 }
 
 body {
@@ -245,10 +243,6 @@ body {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
 }
 
-.upload-form-container {
-  transform: translateY(-3vh);
-}
-
 /* File Upload View */
 .upload-zone {
   border: 2px dashed var(--glass-border);
@@ -371,17 +365,17 @@ body {
 }
 
 /* Mobile Responsiveness */
-@media screen and (max-width: 768px) {
-  h1 { font-size: calc(1.5rem * 0.5) !important; }
-  h2 { font-size: calc(2rem * 0.5) !important; }
-  h3 { font-size: calc(1.75rem * 0.5) !important; }
-  h4 { font-size: calc(1.5rem * 0.5) !important; }
-  h5 { font-size: calc(1.25rem * 0.5) !important; }
-  h6 { font-size: calc(1rem * 0.5) !important; }
-
-  /* Specific title groups */
-  .title-group h1 {
-    font-size: 0.8rem !important; /* Half of 1.6rem roughly, but let's be precise */
+@media (max-width: 768px) {
+  /* Reduce all titles to half size */
+  h1, .window-header .title-group h1 { font-size: 0.6rem !important; }
+  h2, .library-container h2, .history-container h2 { font-size: 0.9rem !important; }
+  h3, .topic-item h3 { font-size: 0.45rem !important; }
+  h4 { font-size: 0.5rem !important; }
+  
+  /* Ensure text doesn't overflow window and wraps below */
+  body, html {
+    overflow-x: hidden;
+    position: relative;
   }
 
   .desktop-app {
@@ -391,41 +385,30 @@ body {
     border: none;
   }
 
-  .sidebar {
-    width: 60px;
-    padding: 15px 0;
+  .main-view {
+    padding: 15px;
+    width: 100%;
   }
 
+  * {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  /* Adjust sidebar for mobile if needed */
+  .sidebar {
+    width: 60px;
+  }
+  
   .nav-item {
     width: 40px;
     height: 40px;
   }
 
-  .main-view {
-    padding: 15px;
-  }
-
-  .window-header {
-    padding: 0 15px;
-    height: 50px;
-  }
-
-  .mobile-hide {
-    display: none !important;
-  }
-
-  .upload-form-container {
-    transform: none !important;
-    padding-bottom: 50px; /* Give some space at the bottom */
-  }
-
-  .upload-zone {
-    height: 200px;
-  }
-
-  /* Ensure text doesn't overflow horizontally */
-  p, span, div, h1, h2, h3, h4, h5, h6 {
-    max-width: 100%;
-    overflow-wrap: break-word;
+  /* Reader adjustments */
+  .document-content {
+    font-size: 0.9rem;
+    padding: 10px;
   }
 }

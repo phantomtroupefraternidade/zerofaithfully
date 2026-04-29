@@ -223,7 +223,7 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
 
   return (
     <div className="upload-container">
-      <header className="mobile-hide" style={{ 
+      <header style={{ 
         marginBottom: '40px', 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -244,7 +244,7 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
         </p>
       </header>
 
-      <div className="upload-form-container">
+      <div style={{ transform: 'translateY(-3vh)' }}>
         <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
           <label style={{ fontSize: '0.9rem', color: 'var(--accent-cyan)' }}>Classificação de Sobrevivência:</label>
           <select 
