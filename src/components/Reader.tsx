@@ -15,8 +15,15 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const readerRef = React.useRef<HTMLDivElement>(null);
   const totalPages = file?.pages.length || 0;
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleFullScreenChange = () => {
@@ -326,33 +333,35 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
       </div>
 
       {/* Refactored Floating Navigation Control */}
-      <div className="floating-reader-nav">
-        <button 
-          onClick={goToPrevPage} 
-          disabled={currentPageIndex === 0} 
-          className="nav-control-btn"
-        >
-          <ChevronLeft size={24} />
-        </button>
-        
-        <div className="nav-info">
-          <span className="current">{currentPageIndex + 1}</span>
-          <span className="separator">/</span>
-          <span className="total">{totalPages}</span>
-        </div>
+      {!(isFullScreen && isMobile) && (
+        <div className="floating-reader-nav">
+          <button 
+            onClick={goToPrevPage} 
+            disabled={currentPageIndex === 0} 
+            className="nav-control-btn"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          
+          <div className="nav-info">
+            <span className="current">{currentPageIndex + 1}</span>
+            <span className="separator">/</span>
+            <span className="total">{totalPages}</span>
+          </div>
 
-        <button 
-          onClick={goToNextPage} 
-          disabled={currentPageIndex === totalPages - 1} 
-          className="nav-control-btn"
-        >
-          <ChevronRight size={24} />
-        </button>
-      </div>
+          <button 
+            onClick={goToNextPage} 
+            disabled={currentPageIndex === totalPages - 1} 
+            className="nav-control-btn"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+      )}
 
       {/* Side Navigation Buttons for FullScreen */}
       <AnimatePresence>
-        {isFullScreen && (
+        {isFullScreen && !isMobile && (
           <>
             <motion.button
               initial={{ opacity: 0, x: -20 }}
