@@ -536,6 +536,15 @@ body {
     justify-content: space-between !important;
   }
 
+  .reader-header-actions {
+    flex-direction: row-reverse !important;
+  }
+
+  .document-content {
+    max-width: 95% !important;
+    padding: 0 10px !important;
+  }
+
   /* Library Image adjustments */
   .library-book-cover {
     height: 190px !important; /* Slightly taller to accommodate scale */
