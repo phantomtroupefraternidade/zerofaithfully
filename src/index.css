@@ -536,6 +536,17 @@ body {
     justify-content: space-between !important;
   }
 
+  .document-view {
+    padding: 15px 10px !important;
+    width: 100% !important;
+  }
+
+  .document-content {
+    max-width: 100% !important;
+    padding: 0 5px !important;
+    font-size: 1rem !important; /* Slightly smaller for mobile flow */
+  }
+
   /* Library Image adjustments */
   .library-book-cover {
     height: 190px !important; /* Slightly taller to accommodate scale */
