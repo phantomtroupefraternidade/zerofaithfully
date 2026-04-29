@@ -385,6 +385,7 @@ body {
     height: 100vh;
     border-radius: 0;
     border: none;
+    transform: translateY(-4%); /* Move entire page up by 4% */
   }
 
   .sidebar {
@@ -399,11 +400,25 @@ body {
 
   .main-view {
     padding: 15px;
+    overflow-y: auto !important; /* Ensure scrolling is allowed */
   }
 
   .window-header {
     padding: 0 15px;
     height: 50px;
+  }
+
+  /* Specific home tab shift */
+  .mobile-home-shift {
+    padding-top: 20vh !important;
+  }
+
+  .mobile-hide {
+    display: none !important;
+  }
+  
+  .mobile-scroll-padding {
+    padding-bottom: 100px !important;
   }
 
   /* Ensure text doesn't overflow horizontally */

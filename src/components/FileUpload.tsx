@@ -222,8 +222,8 @@ const FileUpload: React.FC<{ onFileProcessed: (fileData: FileData) => void }> = 
   const supportedList = ["PDF", "EPUB", "DOCX", "TXT", "CBZ", "ZIP"];
 
   return (
-    <div className="upload-container">
-      <header style={{ 
+    <div className="upload-container mobile-scroll-padding">
+      <header className="mobile-hide" style={{ 
         marginBottom: '40px', 
         display: 'flex', 
         justifyContent: 'space-between', 
