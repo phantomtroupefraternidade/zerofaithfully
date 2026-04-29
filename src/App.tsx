@@ -398,7 +398,7 @@ const App: React.FC = () => {
             </button>
             <div className={`tab-transition-container ${tabAnimClass}`}>
               {renderedTab === 'home' && (
-                <div style={{ 
+                <div className="home-container" style={{ 
                   display: 'flex', 
                   flexDirection: 'column', 
                   alignItems: 'center', 
@@ -407,7 +407,7 @@ const App: React.FC = () => {
                   padding: '0 10%',
                   animation: 'fadeIn 0.8s ease-out'
                 }}>
-                  <div className="glass-card" style={{ 
+                  <div className="glass-card home-card" style={{ 
                     padding: '80px 60px', 
                     textAlign: 'center', 
                     maxWidth: '900px',
@@ -438,7 +438,7 @@ const App: React.FC = () => {
                       width: '60%' 
                     }}></div>
 
-                    <p style={{ 
+                    <p className="home-description" style={{ 
                       fontSize: '1.1rem', 
                       lineHeight: '2', 
                       color: 'rgba(255,255,255,0.7)',

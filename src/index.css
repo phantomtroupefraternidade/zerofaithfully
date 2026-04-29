@@ -411,4 +411,19 @@ body {
     font-size: 0.9rem;
     padding: 10px;
   }
+
+  /* Home tab mobile adjustments */
+  .home-container {
+    padding-top: 10vh !important;
+    justify-content: flex-start !important;
+  }
+
+  .home-card {
+    padding: 30px 20px !important;
+  }
+
+  .home-description {
+    line-height: 1.4 !important;
+    font-size: 0.9rem !important;
+  }
 }
