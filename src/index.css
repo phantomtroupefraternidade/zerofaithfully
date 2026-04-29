@@ -461,6 +461,20 @@ body {
     min-width: 80px !important;
   }
 
+  /* Library mobile adjustments */
+  .library-actions {
+    align-items: center !important;
+    width: 100% !important;
+    margin-top: 10px;
+  }
+
+  .btn-sync, .btn-download-all {
+    font-weight: 400 !important;
+    font-size: 0.8rem !important;
+    padding: 12px 20px !important;
+    letter-spacing: 0.5px !important;
+  }
+
   .header-sync-container {
     left: auto !important;
     right: 15px !important;

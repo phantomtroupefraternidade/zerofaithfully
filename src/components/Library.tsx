@@ -129,14 +129,14 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete, onDownload
             letterSpacing: '1px',
             fontWeight: '700'
           }}>
-            COMPARTILHADA · {files.length} livro{files.length !== 1 ? 's' : ''}
+            NÚCLEO · {files.length} livro{files.length !== 1 ? 's' : ''}
           </span>
         </div>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end' }}>
+        <div className="library-actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end' }}>
           <button 
             onClick={() => window.location.reload()} 
-            className="btn-storage"
+            className="btn-storage btn-sync"
             style={{ 
               padding: '8px 15px', 
               fontSize: '0.7rem', 
@@ -153,6 +153,7 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete, onDownload
 
           <button
             onClick={onDownloadAll}
+            className="btn-download-all"
             title={folderHandle ? 'Baixar todos os livros na pasta vinculada' : 'Vincule uma pasta para ativar'}
             style={{
               display: 'flex',
