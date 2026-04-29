@@ -548,6 +548,10 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
 
+  .reader-container:not(.is-fullscreen) .reader-content-img-wrapper {
+    margin-top: 60px !important;
+  }
+
   .header-sync-container {
     left: auto !important;
     right: 15px !important;

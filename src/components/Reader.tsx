@@ -303,7 +303,7 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
                     {highlightText(el.content, searchTerm)}
                   </p>
                 ) : (
-                  <div style={{ position: 'relative', marginTop: '10px', marginBottom: '10px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)', display: 'inline-block', maxWidth: '100%' }}>
+                  <div className="reader-content-img-wrapper" style={{ position: 'relative', marginTop: '10px', marginBottom: '10px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)', display: 'inline-block', maxWidth: '100%' }}>
                     <img 
                       src={el.content} 
                       alt="Extracted asset" 
