@@ -11,7 +11,7 @@ import confetti from 'canvas-confetti';
 import type { FileData } from './components/FileUpload';
 import { getLibraryFolder, setLibraryFolder, saveFileToFolder } from './utils/storage';
 import { supabase } from './lib/supabaseClient';
-import { FolderOpen, Download } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
