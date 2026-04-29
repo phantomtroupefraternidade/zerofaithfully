@@ -367,35 +367,6 @@ const App: React.FC = () => {
           
           <main className="main-view" style={{ position: 'relative' }}>
             {/* Download all button: below header divider, right wall */}
-            <button
-              onClick={handleDownloadAll}
-              title={folderHandle ? 'Baixar todos os livros na pasta vinculada' : 'Vincule uma pasta para ativar'}
-              style={{
-                position: 'absolute',
-                top: '14px',
-                right: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 14px',
-                background: folderHandle ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)',
-                border: `1px solid ${folderHandle ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: '8px',
-                color: folderHandle ? 'white' : '#555',
-                fontSize: '0.65rem',
-                letterSpacing: '1.5px',
-                textTransform: 'uppercase',
-                cursor: folderHandle ? 'pointer' : 'not-allowed',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap',
-                zIndex: 10
-              }}
-              onMouseEnter={(e) => { if (folderHandle) e.currentTarget.style.background = 'rgba(255,255,255,0.13)'; }}
-              onMouseLeave={(e) => { if (folderHandle) e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; }}
-            >
-              <Download size={12} />
-              Baixar Todos
-            </button>
             <div className={`tab-transition-container ${tabAnimClass}`}>
               {renderedTab === 'home' && (
                 <div className="home-container" style={{ 
@@ -470,7 +441,9 @@ const App: React.FC = () => {
                 <Library 
                   files={files} 
                   onSelect={handleSelectFile} 
-                  onDelete={handleDeleteFile} 
+                  onDelete={handleDeleteFile}
+                  onDownloadAll={handleDownloadAll}
+                  folderHandle={folderHandle}
                 />
               )}
               

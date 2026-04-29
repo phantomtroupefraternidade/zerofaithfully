@@ -8,9 +8,11 @@ interface LibraryProps {
   files: { name: string; pages: PageElement[][]; type: string; originalFile?: File; id?: any; metadata?: any; cover_image?: string | null; storage_path?: string | null; category?: string }[];
   onSelect: (file: any) => void;
   onDelete: (index: number) => void;
+  onDownloadAll: () => void;
+  folderHandle: any;
 }
 
-const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete }) => {
+const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete, onDownloadAll, folderHandle }) => {
   const [showAuth, setShowAuth] = useState<{ index: number } | null>(null);
   const [authAdm, setAuthAdm] = useState('');
   const [authPass, setAuthPass] = useState('');
@@ -131,20 +133,49 @@ const Library: React.FC<LibraryProps> = ({ files, onSelect, onDelete }) => {
           </span>
         </div>
         
-        <button 
-          onClick={() => window.location.reload()} 
-          className="btn-storage"
-          style={{ 
-            padding: '8px 15px', 
-            fontSize: '0.7rem', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px',
-            borderRadius: '10px'
-          }}
-        >
-          <RefreshCw size={14} /> Sincronizar Agora
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end' }}>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="btn-storage"
+            style={{ 
+              padding: '8px 15px', 
+              fontSize: '0.7rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              borderRadius: '10px',
+              width: '100%',
+              justifyContent: 'center'
+            }}
+          >
+            <RefreshCw size={14} /> Sincronizar Agora
+          </button>
+
+          <button
+            onClick={onDownloadAll}
+            title={folderHandle ? 'Baixar todos os livros na pasta vinculada' : 'Vincule uma pasta para ativar'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              padding: '8px 15px',
+              background: folderHandle ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${folderHandle ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)'}`,
+              borderRadius: '10px',
+              color: folderHandle ? 'white' : '#555',
+              fontSize: '0.7rem',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              cursor: folderHandle ? 'pointer' : 'not-allowed',
+              transition: 'all 0.2s ease',
+              width: '100%',
+              fontWeight: '600'
+            }}
+          >
+            <Download size={14} /> Baixar Todos
+          </button>
+        </div>
       </div>
       
       {files.length === 0 ? (
