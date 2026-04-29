@@ -214,6 +214,7 @@ const Reader: React.FC<ReaderProps> = ({ file }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none', width: '100%' }}
             />
+          </div>
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
